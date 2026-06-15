@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#1e3a8a"/>
+<title>AIIMS Pharmacist MCQ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#eef2f7;overflow-x:hidden}
+button{cursor:pointer;font-family:inherit;border:none;outline:none}
+input,select,textarea{font-family:inherit;outline:none;-webkit-appearance:none}
+
+/* ── FIXED HEADER ── */
+#appHeader{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  background:linear-gradient(135deg,#1a3a8f 0%,#2563eb 100%);
+  box-shadow:0 3px 16px rgba(30,58,138,0.35);
+}
+.hdr-top{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 16px 6px;
+}
+.app-name{color:#fff;font-size:17px;font-weight:800;letter-spacing:-0.3px}
+.app-sub{color:#93c5fd;font-size:11px;margin-top:1px}
+.q-badge{
+  background:rgba(255,255,255,0.18);color:#fff;
+  border:1px solid rgba(255,255,255,0.3);border-radius:20px;
+  padding:4px 13px;font-size:12px;font-weight:700;white-space:nowrap
+}
+.tab-row{display:flex}
+.tab-btn{
+  flex:1;background:transparent;border:none;color:rgba(255,255,255,0.55);
+  padding:10px 0 9px;font-size:13px;font-weight:500;
+  border-bottom:3px solid transparent;transition:all 0.2s
+}
+.tab-btn.on{color:#fff;border-bottom:3px solid #fff;font-weight:700}
+
+/* ── SCROLL BODY ── */
+#pageBody{
+  margin-top:96px; /* header height */
+  padding:14px 14px 30px;
+  min-height:calc(100vh - 96px);
+}
+
+/* ── CARDS ── */
+.card{background:#fff;border-radius:14px;padding:18px 15px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:12px}
+.card-title{font-size:16px;font-weight:700;color:#1e293b;margin-bottom:14px}
+
+/* ── BUTTONS ── */
+.btn-blue{
+  background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;
+  border-radius:10px;padding:13px 20px;font-weight:700;font-size:15px;
+  width:100%;box-shadow:0 4px 14px rgba(37,99,235,0.35);
+  transition:opacity 0.2s;letter-spacing:0.2px
+}
+.btn-blue:disabled{opacity:0.45}
+.btn-blue:active{opacity:0.85}
+.btn-gray{
+  background:#f1f5f9;color:#374151;border:1.5px solid #dde3ec;
+  border-radius:10px;padding:11px 20px;font-weight:600;font-size:14px;width:100%
+}
+.btn-red{
+  background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;
+  border-radius:8px;padding:7px 13px;font-weight:600;font-size:13px
+}
+.btn-green{
+  background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;
+  border-radius:8px;padding:7px 13px;font-weight:600;font-size:13px
+}
+
+/* ── FORM ── */
+.field{margin-bottom:13px}
+.field label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:5px}
+.field input,.field select,.field textarea{
+  width:100%;padding:11px 13px;border:1.5px solid #dde3ec;
+  border-radius:9px;font-size:14px;color:#1e293b;background:#fff;
+  transition:border-color 0.2s
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#3b82f6}
+.field textarea{resize:vertical;min-height:72px;line-height:1.5}
+.field .err{color:#ef4444;font-size:11px;margin-top:3px;display:block}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
+.opt-field label{font-size:12px;color:#64748b;display:block;margin-bottom:3px}
+.opt-field input{
+  width:100%;padding:9px 11px;border:1.5px solid #dde3ec;
+  border-radius:8px;font-size:13px;color:#1e293b
+}
+.opt-field input.hi{border-color:#10b981;background:#f0fdf4}
+.ans-row{display:flex;gap:8px;margin-bottom:13px}
+.ans-btn{
+  flex:1;padding:10px 0;border:1.5px solid #dde3ec;border-radius:8px;
+  background:#f8fafc;color:#374151;font-weight:700;font-size:16px;transition:all 0.2s
+}
+.ans-btn.on{background:#d1fae5;border-color:#10b981;color:#065f46}
+
+/* ── QUIZ ── */
+.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.prog-bar{flex:1;height:7px;background:#e2e8f0;border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#2563eb,#06b6d4);border-radius:99px;transition:width 0.35s}
+.q-counter{font-size:12px;color:#64748b;white-space:nowrap}
+.mini-sc{font-size:12px;font-weight:700;white-space:nowrap}
+.subj-tag{
+  display:inline-block;background:#eff6ff;color:#1d4ed8;
+  border:1px solid #bfdbfe;border-radius:6px;padding:3px 10px;
+  font-size:11px;font-weight:600;margin-bottom:10px;letter-spacing:0.2px
+}
+.q-box{
+  background:#fff;border-radius:12px;padding:16px 15px;margin-bottom:14px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);border:1.5px solid #e8eef5
+}
+.q-text{color:#0f172a;font-weight:600;font-size:15px;line-height:1.65}
+.opt-row{
+  display:flex;align-items:center;gap:10px;padding:12px 14px;
+  border-radius:10px;width:100%;text-align:left;border:1.5px solid #e2e8f0;
+  background:#f8fafc;margin-bottom:9px;transition:all 0.15s
+}
+.opt-row:active{transform:scale(0.98)}
+.opt-ltr{
+  background:#e2e8f0;color:#374151;border-radius:6px;
+  padding:3px 8px;font-weight:700;font-size:12px;
+  min-width:26px;text-align:center;flex-shrink:0
+}
+.opt-txt{color:#1e293b;line-height:1.5;flex:1;font-size:14px}
+.opt-ico{margin-left:auto;font-size:18px;flex-shrink:0;font-weight:700}
+.opt-row.sel{background:#dbeafe;border-color:#3b82f6}
+.opt-row.sel .opt-ltr{background:#3b82f6;color:#fff}
+.opt-row.ok{background:#dcfce7;border-color:#22c55e}
+.opt-row.ok .opt-ltr{background:#16a34a;color:#fff}
+.opt-row.ng{background:#fee2e2;border-color:#ef4444}
+.opt-row.ng .opt-ltr{background:#dc2626;color:#fff}
+.expl{
+  background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;
+  padding:12px;margin-bottom:13px;color:#78350f;font-size:13px;line-height:1.6
+}
+.act-row{display:flex;gap:10px}
+.act-row .btn-blue{flex:2}
+.act-row .btn-gray{flex:1}
+
+/* ── RESULT ── */
+.sc-grid{display:flex;gap:10px;margin-bottom:14px}
+.sc-box{
+  text-align:center;flex:1;background:#f8fafc;
+  border-radius:11px;padding:12px 6px
+}
+.sc-val{font-size:26px;font-weight:800}
+.sc-lbl{font-size:11px;color:#64748b;margin-top:2px}
+.pct-bar{height:11px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-bottom:8px}
+.pct-fill{height:100%;border-radius:99px;transition:width 0.6s}
+.pct-txt{text-align:center;font-size:22px;font-weight:800;color:#1e293b;margin-bottom:16px}
+.result-center{text-align:center}
+
+/* ── MANAGE ── */
+.srch-row{display:flex;gap:8px;margin-bottom:11px}
+.srch-row input{
+  flex:1;padding:9px 12px;border:1.5px solid #dde3ec;
+  border-radius:8px;font-size:13px;color:#1e293b;background:#fff
+}
+.srch-row select{
+  padding:9px 8px;border:1.5px solid #dde3ec;border-radius:8px;
+  font-size:12px;background:#fff;color:#374151;min-width:90px
+}
+.mcq-card{
+  background:#fff;border-radius:12px;padding:13px 13px;
+  border:1.5px solid #e8eef5;margin-bottom:9px;
+  box-shadow:0 1px 6px rgba(0,0,0,0.04)
+}
+.mcq-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.mcq-q{font-size:13px;font-weight:600;color:#1e293b;margin:5px 0 7px;line-height:1.5}
+.mcq-opts{display:flex;flex-wrap:wrap;gap:5px}
+.mcq-opt{
+  font-size:11px;padding:2px 7px;border-radius:4px;
+  background:#f1f5f9;color:#475569;border:1px solid #e2e8f0
+}
+.mcq-opt.ok{background:#dcfce7;color:#15803d;border-color:#86efac;font-weight:700}
+.stat-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
+.stat-p{
+  background:#eff6ff;border:1px solid #bfdbfe;border-radius:20px;
+  padding:4px 11px;font-size:11px;color:#1d4ed8;font-weight:600
+}
+.del-confirm{margin-top:8px;display:flex;gap:6px}
+.del-confirm button{flex:1;padding:7px 0;border-radius:8px;font-size:12px;font-weight:600}
+
+/* ── SETTINGS ── */
+.info-strip{
+  background:linear-gradient(135deg,#1a3a8f,#2563eb);
+  border-radius:13px;padding:16px;color:#fff;margin-bottom:11px
+}
+.info-strip-title{font-size:16px;font-weight:700;margin-bottom:3px}
+.info-strip-sub{font-size:12px;opacity:0.75}
+.sett-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 0;border-bottom:1px solid #f1f5f9
+}
+.sett-row:last-child{border-bottom:none}
+.sett-lbl{font-size:14px;font-weight:600;color:#1e293b}
+.sett-sub{font-size:11px;color:#94a3b8;margin-top:2px}
+
+/* ── SUCCESS / ERROR ── */
+.ok-banner{
+  background:#dcfce7;color:#15803d;border:1px solid #86efac;
+  border-radius:8px;padding:10px 13px;margin-bottom:13px;font-weight:600;font-size:14px
+}
+.err-banner{
+  background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;
+  border-radius:8px;padding:10px 13px;margin-bottom:13px;font-weight:600;font-size:14px
+}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:40px 20px}
+.empty-ico{font-size:16px;color:#94a3b8;margin-bottom:14px;font-weight:700;
+  letter-spacing:2px}
+.empty-title{font-size:16px;font-weight:700;color:#1e293b;margin-bottom:6px}
+.empty-sub{font-size:13px;color:#64748b;line-height:1.65}
+
+/* ── SUBJECT FILTER CHIPS ── */
+.chip-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;margin-bottom:13px;
+  scrollbar-width:none;-ms-overflow-style:none}
+.chip-row::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;
+  border:1.5px solid #dde3ec;background:#f8fafc;color:#475569;white-space:nowrap
+}
+.chip.on{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:#f1f5f9;margin:10px 0}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fadeUp 0.22s ease}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.pulse{animation:pulse 0.3s ease}
+</style>
+</head>
+<body>
+
+<!-- FIXED HEADER -->
+<div id="appHeader">
+  <div class="hdr-top">
+    <div>
+      <div class="app-name">AIIMS MCQ Revision</div>
+      <div class="app-sub">Pharmacist CRE 2025</div>
+    </div>
+    <div class="q-badge" id="qBadge">0 Questions</div>
+  </div>
+  <div class="tab-row">
+    <button class="tab-btn on" id="tb-quiz" onclick="gotoTab('quiz')">&#9654; Quiz</button>
+    <button class="tab-btn" id="tb-add"  onclick="gotoTab('add')">+ Add MCQ</button>
+    <button class="tab-btn" id="tb-manage" onclick="gotoTab('manage')">&#9776; Manage</button>
+    <button class="tab-btn" id="tb-settings" onclick="gotoTab('settings')">&#9965; More</button>
+  </div>
+</div>
+
+<!-- SCROLLABLE BODY -->
+<div id="pageBody"></div>
+
+<script>
+// ═══════════════════════════════════
+// DATA
+// ═══════════════════════════════════
+const KEY = 'aiims_mcqs_v3';
+const SUBJECTS = [
+  'Pharmaceutics','Pharmaceutical Chemistry','Pharmacognosy',
+  'Pharmacology & Toxicology','Physical Pharmacy','Pharmaceutical Analysis',
+  'Microbiology & Immunology','Biopharmaceutics & PK',
+  'Human Anatomy & Physiology','Biochemistry','Health & Community Pharmacy',
+  'Pharmaceutical Jurisprudence','DSBM','Hospital & Clinical Pharmacy',
+  'General Knowledge','Reasoning & Aptitude','Computer Knowledge','Other'
+];
+
+let mcqs = [];
+let curTab = 'quiz';
+
+function load(){
+  try{ const d=localStorage.getItem(KEY); if(d) mcqs=JSON.parse(d); }catch(e){ mcqs=[]; }
+  updateBadge();
+}
+function save(){
+  localStorage.setItem(KEY, JSON.stringify(mcqs));
+  updateBadge();
+}
+function updateBadge(){
+  document.getElementById('qBadge').textContent = mcqs.length + ' Questions';
+}
+
+// ═══════════════════════════════════
+// TABS
+// ═══════════════════════════════════
+function gotoTab(t){
+  curTab = t;
+  ['quiz','add','manage','settings'].forEach(x=>{
+    document.getElementById('tb-'+x).classList.toggle('on', x===t);
+  });
+  quizState = null;
+  addSaved = false;
+  delConfirm = null;
+  render();
+  document.getElementById('pageBody').scrollTop = 0;
+  window.scrollTo(0,0);
+}
+
+function render(){
+  const el = document.getElementById('pageBody');
+  el.innerHTML = '';
+  if(curTab==='quiz')     renderQuiz(el);
+  else if(curTab==='add') renderAdd(el);
+  else if(curTab==='manage') renderManage(el);
+  else renderSettings(el);
+}
+
+// ═══════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════
+let quizState = null;
+let quizFilter = 'All';
+
+function renderQuiz(el){
+  if(!quizState){ renderQuizHome(el); return; }
+  if(quizState.done){ renderResult(el); return; }
+  renderQuestion(el);
+}
+
+function subjectCounts(){
+  const c={};
+  mcqs.forEach(q=>{ c[q.subject]=(c[q.subject]||0)+1; });
+  return c;
+}
+
+function renderQuizHome(el){
+  const counts = subjectCounts();
+  if(mcqs.length===0){
+    el.innerHTML=`<div class="card empty fu">
+      <div class="empty-ico">[ NO QUESTIONS ]</div>
+      <div class="empty-title">MCQ Bank is Empty</div>
+      <div class="empty-sub">Go to "Add MCQ" tab and<br>add your questions to get started.</div>
+    </div>`;
+    return;
+  }
+
+  // chip filters
+  const allSubjs = ['All', ...Object.keys(counts)];
+  const chips = allSubjs.map(s=>`
+    <div class="chip ${quizFilter===s?'on':''}" onclick="quizFilter='${s}';render()">
+      ${s==='All'?'All ('+mcqs.length+')':s.split(' ')[0]+' ('+counts[s]+')'}
+    </div>`).join('');
+
+  const filtered = quizFilter==='All'?mcqs:mcqs.filter(q=>q.subject===quizFilter);
+
+  el.innerHTML=`
+    <div class="card fu">
+      <div class="card-title">Start Revision Quiz</div>
+      <div class="chip-row">${chips}</div>
+      <p style="color:#64748b;font-size:13px;margin-bottom:14px">
+        <b style="color:#1d4ed8">${filtered.length}</b> questions available
+      </p>
+      <button class="btn-blue" onclick="startQuiz()" ${filtered.length===0?'disabled':''}>
+        Start Quiz &#8594;
+      </button>
+    </div>
+    <div class="card" style="background:linear-gradient(135deg,#1a3a8f,#2563eb);padding:16px">
+      <div style="font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:10px">Your MCQ Bank</div>
+      <div style="display:flex;flex-wrap:wrap;gap:9px">
+        ${Object.entries(counts).map(([s,c])=>`
+          <div style="background:rgba(255,255,255,0.13);border-radius:9px;padding:8px 13px;text-align:center">
+            <div style="font-size:20px;font-weight:800;color:#fff">${c}</div>
+            <div style="font-size:10px;color:#93c5fd;margin-top:1px">${s.split(' ')[0]}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; }
+
+function startQuiz(){
+  const filtered = quizFilter==='All'?mcqs:mcqs.filter(q=>q.subject===quizFilter);
+  if(!filtered.length) return;
+  quizState={
+    queue:shuffle(filtered), idx:0,
+    sel:null, revealed:false, done:false,
+    score:{c:0,w:0,s:0}
+  };
+  render();
+}
+
+function renderQuestion(el){
+  const qs=quizState, q=qs.queue[qs.idx];
+  const pct=Math.round((qs.idx/qs.queue.length)*100);
+  const OPTS=['A','B','C','D'];
+  const vals={A:q.optA,B:q.optB,C:q.optC,D:q.optD};
+
+  const optHtml=OPTS.map(o=>{
+    let cls='opt-row', ico='';
+    if(qs.revealed){
+      if(o===q.correct){cls+=' ok';ico='<span class="opt-ico" style="color:#16a34a">&#10003;</span>';}
+      else if(o===qs.sel&&o!==q.correct){cls+=' ng';ico='<span class="opt-ico" style="color:#dc2626">&#10007;</span>';}
+    } else {
+      if(o===qs.sel) cls+=' sel';
+    }
+    return `<button class="${cls}" onclick="selOpt('${o}')">
+      <span class="opt-ltr">${o}</span>
+      <span class="opt-txt">${vals[o]||''}</span>
+      ${ico}
+    </button>`;
+  }).join('');
+
+  const explHtml = qs.revealed && q.explanation
+    ? `<div class="expl"><b>Explanation:</b> ${q.explanation}</div>` : '';
+
+  let actHtml;
+  if(!qs.revealed){
+    actHtml=`<div class="act-row">
+      <button class="btn-gray" onclick="skipQ()">Skip &#10226;</button>
+      <button class="btn-blue" onclick="submitQ()" ${!qs.sel?'disabled':''}>Submit Answer</button>
+    </div>`;
+  } else {
+    const last=qs.idx+1>=qs.queue.length;
+    actHtml=`<button class="btn-blue" onclick="nextQ()">${last?'See Results':'Next Question &#8594;'}</button>`;
+  }
+
+  el.innerHTML=`<div class="fu">
+    <div class="prog-row">
+      <span class="q-counter">Q ${qs.idx+1}/${qs.queue.length}</span>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <span class="mini-sc">
+        <span style="color:#16a34a">+${qs.score.c}</span>
+        <span style="color:#dc2626"> -${qs.score.w}</span>
+        <span style="color:#d97706"> /${qs.score.s}</span>
+      </span>
+    </div>
+    <div class="subj-tag">${q.subject}</div>
+    <div class="q-box"><p class="q-text">Q. ${q.question}</p></div>
+    ${optHtml}
+    ${explHtml}
+    ${actHtml}
+  </div>`;
+}
+
+function selOpt(o){ if(quizState.revealed)return; quizState.sel=o; render(); }
+function submitQ(){
+  if(!quizState.sel||quizState.revealed)return;
+  quizState.revealed=true;
+  const q=quizState.queue[quizState.idx];
+  if(quizState.sel===q.correct) quizState.score.c++;
+  else quizState.score.w++;
+  render();
+}
+function skipQ(){
+  if(quizState.revealed)return;
+  quizState.revealed=true;
+  quizState.sel=null;
+  quizState.score.s++;
+  render();
+}
+function nextQ(){
+  if(quizState.idx+1>=quizState.queue.length){ quizState.done=true; render(); return; }
+  quizState.idx++;
+  quizState.sel=null;
+  quizState.revealed=false;
+  render();
+}
+
+function renderResult(el){
+  const s=quizState.score;
+  const total=s.c+s.w+s.s;
+  const pct=total?Math.round((s.c/total)*100):0;
+  const col=pct>=80?'#16a34a':pct>=60?'#2563eb':'#d97706';
+  const msg=pct>=80?'Excellent! Well Done!':pct>=60?'Good! Keep Practicing!':'Keep Practicing!';
+  el.innerHTML=`<div class="card fu result-center">
+    <div style="font-size:18px;font-weight:800;color:#1e293b;margin-bottom:16px">${msg}</div>
+    <div class="sc-grid">
+      <div class="sc-box">
+        <div class="sc-val" style="color:#16a34a">${s.c}</div>
+        <div class="sc-lbl">Correct</div>
+      </div>
+      <div class="sc-box">
+        <div class="sc-val" style="color:#dc2626">${s.w}</div>
+        <div class="sc-lbl">Wrong</div>
+      </div>
+      <div class="sc-box">
+        <div class="sc-val" style="color:#d97706">${s.s}</div>
+        <div class="sc-lbl">Skipped</div>
+      </div>
+    </div>
+    <div class="pct-bar"><div class="pct-fill" style="width:${pct}%;background:${col}"></div></div>
+    <div class="pct-txt" style="color:${col}">${pct}%</div>
+    <button class="btn-blue" onclick="quizState=null;render()">Play Again</button>
+  </div>`;
+}
+
+// ═══════════════════════════════════
+// ADD MCQ
+// ═══════════════════════════════════
+let addForm={question:'',subject:SUBJECTS[0],optA:'',optB:'',optC:'',optD:'',correct:'A',explanation:''};
+let addSaved=false;
+
+function renderAdd(el){
+  const subOpts=SUBJECTS.map(s=>`<option value="${s}" ${addForm.subject===s?'selected':''}>${s}</option>`).join('');
+  const ansBtns=['A','B','C','D'].map(o=>
+    `<button class="ans-btn ${addForm.correct===o?'on':''}" onclick="setAns('${o}')">${o}</button>`
+  ).join('');
+
+  el.innerHTML=`<div class="card fu">
+    <div class="card-title">Add New MCQ</div>
+    ${addSaved?'<div class="ok-banner">&#10003; Question saved successfully!</div>':''}
+    <div class="field">
+      <label>Subject</label>
+      <select id="fSub" onchange="addForm.subject=this.value">${subOpts}</select>
+    </div>
+    <div class="field">
+      <label>Question *</label>
+      <textarea id="fQ" placeholder="Type your question here..." rows="3" oninput="addForm.question=this.value">${addForm.question}</textarea>
+      <span class="err" id="eQ"></span>
+    </div>
+    <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:8px">Options *</label>
+    <div class="opts-grid">
+      ${['A','B','C','D'].map(o=>`
+        <div class="opt-field">
+          <label>Option ${o}</label>
+          <input id="fO${o}" class="${addForm.correct===o?'hi':''}"
+            placeholder="Option ${o}" value="${(addForm['opt'+o]||'').replace(/"/g,'&quot;')}"
+            oninput="addForm['opt${o}']=this.value">
+        </div>`).join('')}
+    </div>
+    <div class="field">
+      <label>Correct Answer</label>
+      <div class="ans-row">${ansBtns}</div>
+    </div>
+    <div class="field">
+      <label>Explanation (optional)</label>
+      <textarea id="fEx" placeholder="Type explanation for the answer (optional)..." rows="2" oninput="addForm.explanation=this.value">${addForm.explanation||''}</textarea>
+    </div>
+    <button class="btn-blue" onclick="saveMcq()">Save Question</button>
+  </div>`;
+}
+
+function setAns(o){
+  addForm.correct=o;
+  // sync current input values before re-render
+  ['A','B','C','D'].forEach(x=>{
+    const el=document.getElementById('fO'+x);
+    if(el) addForm['opt'+x]=el.value;
+  });
+  const fq=document.getElementById('fQ');
+  if(fq) addForm.question=fq.value;
+  const fe=document.getElementById('fEx');
+  if(fe) addForm.explanation=fe.value;
+  render();
+}
+
+function saveMcq(){
+  addForm.question=(document.getElementById('fQ')||{}).value||addForm.question;
+  addForm.subject=(document.getElementById('fSub')||{}).value||addForm.subject;
+  ['A','B','C','D'].forEach(o=>{
+    const el=document.getElementById('fO'+o);
+    if(el) addForm['opt'+o]=el.value;
+  });
+  addForm.explanation=(document.getElementById('fEx')||{}).value||'';
+
+  if(!addForm.question.trim()){
+    const e=document.getElementById('eQ');
+    if(e) e.textContent='Question cannot be empty!';
+    return;
+  }
+
+  mcqs.push({...addForm, id:Date.now()});
+  save();
+  addSaved=true;
+
+  // reset
+  addForm={question:'',subject:addForm.subject,optA:'',optB:'',optC:'',optD:'',correct:'A',explanation:''};
+  setTimeout(()=>{ addSaved=false; render(); }, 2200);
+  render();
+}
+
+// ═══════════════════════════════════
+// MANAGE
+// ═══════════════════════════════════
+let manSrch='', manFil='All', delConfirm=null;
+
+function renderManage(el){
+  if(mcqs.length===0){
+    el.innerHTML=`<div class="card empty fu">
+      <div class="empty-ico">[ EMPTY ]</div>
+      <div class="empty-title">No MCQs Found</div>
+      <div class="empty-sub">Go to "Add MCQ" tab to add your questions.</div>
+    </div>`;
+    return;
+  }
+
+  const counts=subjectCounts();
+  const visible=mcqs.filter(q=>{
+    const fs=manFil==='All'||q.subject===manFil;
+    const fq=!manSrch||q.question.toLowerCase().includes(manSrch.toLowerCase());
+    return fs&&fq;
+  });
+
+  const subOpts=['All',...Object.keys(counts)].map(s=>
+    `<option value="${s}" ${manFil===s?'selected':''}>${s==='All'?'All ('+mcqs.length+')':s+' ('+counts[s]+')'}</option>`
+  ).join('');
+
+  const pills=['Total: '+mcqs.length,...Object.entries(counts).slice(0,3).map(([s,c])=>s.split(' ')[0]+': '+c)]
+    .map(t=>`<div class="stat-p">${t}</div>`).join('');
+
+  const listHtml=visible.map((q,i)=>{
+    const opts=['A','B','C','D'].map(o=>
+      `<div class="mcq-opt ${o===q.correct?'ok':''}">${o}: ${q['opt'+o]||''}</div>`
+    ).join('');
+
+    if(delConfirm===q.id) return `<div class="mcq-card fu">
+      <div class="mcq-q" style="color:#b91c1c">Are you sure you want to delete this question?</div>
+      <div class="del-confirm">
+        <button class="btn-red" onclick="doDelete(${q.id})">Yes, Delete</button>
+        <button class="btn-gray" onclick="delConfirm=null;renderManage(document.getElementById('pageBody'))">Cancel</button>
+      </div>
+    </div>`;
+
+    return `<div class="mcq-card">
+      <div class="mcq-hdr">
+        <div style="flex:1">
+          <div class="subj-tag">${q.subject}</div>
+          <div class="mcq-q">${i+1}. ${q.question}</div>
+          <div class="mcq-opts">${opts}</div>
+        </div>
+        <button class="btn-red" style="flex-shrink:0;margin-top:4px;padding:6px 10px"
+          onclick="askDel(${q.id})">Del</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML=`<div class="fu">
+    <div class="stat-pills">${pills}</div>
+    <div class="srch-row">
+      <input placeholder="Search question..." value="${manSrch}"
+        oninput="manSrch=this.value;renderManage(document.getElementById('pageBody'))">
+      <select onchange="manFil=this.value;renderManage(document.getElementById('pageBody'))">${subOpts}</select>
+    </div>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">${visible.length} questions</p>
+    ${listHtml||'<p style="text-align:center;color:#94a3b8;padding:20px">No results found</p>'}
+  </div>`;
+}
+
+function askDel(id){ delConfirm=id; renderManage(document.getElementById('pageBody')); }
+function doDelete(id){ mcqs=mcqs.filter(q=>q.id!==id); save(); delConfirm=null; renderManage(document.getElementById('pageBody')); }
+
+// ═══════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════
+function renderSettings(el){
+  el.innerHTML=`<div class="fu">
+    <div class="info-strip">
+      <div class="info-strip-title">AIIMS MCQ Revision App</div>
+      <div class="info-strip-sub">Pharmacist CRE 2025 &nbsp;|&nbsp; ${mcqs.length} Questions saved</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Backup & Restore</div>
+      <p style="font-size:13px;color:#64748b;margin-bottom:14px;line-height:1.65">
+        Save your MCQs as a JSON backup file. You can restore it anytime on any device or after an app update.
+      </p>
+      <div style="display:flex;gap:9px;margin-bottom:0">
+        <button class="btn-blue" onclick="exportData()" style="flex:1">Export Backup</button>
+        <button class="btn-gray" onclick="document.getElementById('impFile').click()" style="flex:1">Import Backup</button>
+      </div>
+      <input type="file" id="impFile" accept=".json" style="display:none" onchange="importData(this)">
+    </div>
+
+    <div class="card">
+      <div class="card-title">Install App</div>
+      <p style="font-size:13px;color:#64748b;line-height:1.65;margin-bottom:14px">
+        If using in a browser:<br>
+        Chrome menu (3 dots) &#8594; <b>"Add to Home Screen"</b>.<br>
+        The app will be installed on your home screen.
+      </p>
+    </div>
+
+    <div class="card" style="border:1.5px solid #fca5a5">
+      <div class="card-title" style="color:#b91c1c">Danger Zone</div>
+      <p style="font-size:13px;color:#7f1d1d;margin-bottom:13px;line-height:1.6">
+        All ${mcqs.length} questions will be permanently deleted. Please export a backup first!
+      </p>
+      <button class="btn-red" style="width:100%;padding:12px;font-size:14px" onclick="clearAll()">
+        Delete All MCQs
+      </button>
+    </div>
+  </div>`;
+}
+
+function exportData(){
+  if(mcqs.length===0){ alert('No MCQs available to backup!'); return; }
+  const d=JSON.stringify(mcqs,null,2);
+  const b=new Blob([d],{type:'application/json'});
+  const u=URL.createObjectURL(b);
+  const a=document.createElement('a');
+  a.href=u; a.download='aiims_mcq_backup_'+new Date().toISOString().split('T')[0]+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(u);
+}
+
+function importData(inp){
+  const f=inp.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=function(e){
+    try{
+      const imported=JSON.parse(e.target.result);
+      if(!Array.isArray(imported)){ alert('Invalid file format!'); return; }
+      const existing=new Set(mcqs.map(q=>q.id));
+      const fresh=imported.filter(q=>!existing.has(q.id));
+      mcqs=[...mcqs,...fresh];
+      save(); render();
+      alert(fresh.length+' new questions imported successfully!');
+    }catch(e){ alert('Could not read the file!'); }
+  };
+  r.readAsText(f);
+  inp.value='';
+}
+
+function clearAll(){
+  if(mcqs.length===0){ alert('Already empty!'); return; }
+  if(confirm('Are you sure you want to delete all '+mcqs.length+' MCQs?\n\nPlease export a backup first!'))
+  { mcqs=[]; save(); render(); }
+}
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
+// Fix header height dynamically
+function fixBodyPadding(){
+  const h=document.getElementById('appHeader');
+  const hh=h?h.offsetHeight:96;
+  document.getElementById('pageBody').style.marginTop=hh+'px';
+}
+window.addEventListener('resize', fixBodyPadding);
+setTimeout(fixBodyPadding, 100);
+
+load();
+render();
+</script>
+</body>
+</html>
